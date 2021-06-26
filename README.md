@@ -1,7 +1,7 @@
 # Windows 10 VirusTotal Scanner
 Source Code 347 Windows 10 VirusTotal Scanner
 
-<img scr="sc347vscanner.png" style="width:90%;height:auto;"/>
+<img scr="https://raw.githubusercontent.com/sourcecode347/Windows10VirusTotalScanner/main/sc347vscanner.png" style="width:90%;height:auto;"/>
 
 # Requirements
 
