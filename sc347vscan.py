@@ -4,7 +4,7 @@
 MITLicense = '''
 MIT License
 
-Copyright (c) 2021 Nikolaos Bazigos
+Copyright (c) 2021 SourceCode347(Nikolaos Bazigos)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -45,6 +45,7 @@ import hashlib , requests
 
 VirusTotalApiKey = "ENTER HERE YOUR VIRUSTOTAL API KEY"
 
+
 RunningApps = []
 ScannedFiles = []
 Hashes = []
@@ -53,26 +54,40 @@ TotalScans = 0
 Detections = []
 Permalinks = []
 
-def set():
-    try:
-        os.system("del permalinks.txt")
-    except:
-        pass
-    try:
-        with open('permalinks.txt', 'w') as file:
-            file.write("")
-    except:
-        pass
-    '''try:
-        os.system("del detections.txt")
-    except:
-        pass'''
-    try:
-        if os.path.isfile("detections.txt")==False:
-            with open('detections.txt', 'w') as file:
+def set(opt):
+    if opt=="all":
+        try:
+            os.system("del permalinks.txt")
+        except:
+            pass
+        try:
+            with open('permalinks.txt', 'w') as file:
                 file.write("")
-    except:
-        pass
+        except:
+            pass
+        try:
+            if os.path.isfile("detections.txt")==False:
+                with open('detections.txt', 'w') as file:
+                    file.write("")
+        except:
+            pass
+    if opt=="perm":
+        try:
+            os.system("del permalinks.txt")
+        except:
+            pass
+        try:
+            with open('permalinks.txt', 'w') as file:
+                file.write("")
+        except:
+            pass
+    if opt=="det":
+        try:
+            if os.path.isfile("detections.txt")==False:
+                with open('detections.txt', 'w') as file:
+                    file.write("")
+        except:
+            pass
 
 def getsha256(filename):
     with open(filename,"rb") as f:
@@ -153,7 +168,6 @@ def analysis(sfile ,type):
     if scan == None:
         print(sfile)
         print("Error File Not Scanned (!)")
-        print("We Not Get response_code (!)")
     elif scan == False:
         print(sfile)
         print("The Hash of File Not Exists in VT Database (!)")
@@ -179,6 +193,7 @@ def analysis(sfile ,type):
                 with open("detections.txt","a") as dtc:
                     dtc.write(sfile+"\n"+str(scan[2])+"\n")
                 Detections.append(sfile)
+                return "virus"
             print((" "*80))
         if scan[0]==0:
             print((" "*80))
@@ -189,7 +204,7 @@ def analysis(sfile ,type):
 
 #print(analysis("C:\Windows\System32\MoUsoCoreWorker.exe","file"))
 def RandomFile():
-    des = random.randint(0,3)
+    des = random.randint(0,5)
     if des == 0:
         directory = "C:\\"
         directories = [directory]
@@ -197,6 +212,12 @@ def RandomFile():
         directory = "C:\\Windows\\System32\\"
         directories = [directory]
     if des == 2:
+        directory = "C:\\Program Files (x86)\\"
+        directories = [directory]
+    if des == 3:
+        directory = "C:\\Program Files\\"
+        directories = [directory]
+    if des == 4:
         directory = "C:\\Users\\"+os.environ.get('USERNAME')+"\\"
         directories = [directory]
     else:
@@ -217,11 +238,47 @@ def RandomFile():
         rf = dirfiles[random.randint(0,len(dirfiles)-1)]
         if os.path.isfile(rf):
             return rf
-set()
 os.system("cls")
 print(license)
 #print(analysis("3d3ed27eea5c3557e8b019db92482944dc069cadbfa39a721ecdbf32140796df" , "hash"))
-
+if os.path.isfile("permalinks.txt")==False:
+    set("perm")
+try:
+    os.system("copy permalinks.txt permalinksSave.txt")
+except:
+    pass
+if os.path.isfile("permalinksSave.txt"):
+    with open("permalinksSave.txt","r") as pf:
+        vtag = "https://www.virustotal.com/gui/file/"
+        for pl in pf:
+            os.system("cls")
+            print(license)
+            with open("detections.txt","r") as df:
+                dfcount = 0
+                for dl in df:
+                    if dl != "\n":
+                        dfcount+=1
+            with open("permalinks.txt","r") as pfs:
+                pfcount = 0
+                for pls in pfs:
+                    if pls != "\n":
+                        pfcount+=1
+            print(("#"*80))
+            print("### Detections : "+str(int(dfcount/2))+" | Permalinks : "+str(pfcount)+" | TotalScans : "+str(TotalScans)+" | UnresponsedHashes : "+str(len(Hashes)))
+            print(("#"*80))
+            pl = pl.replace(vtag,"")
+            pos = str(pl).find("/")
+            pl = pl[0:pos]
+            print("Permalink Hash : "+str(pl))
+            try:
+                analysis(str(pl),"hash")
+                time.sleep(15)
+                TotalScans+=1
+            except:
+                pass
+set("all")
+os.system("cls")
+print(license)
 while True:
     pro = executeCMD('wmic process get ExecutablePath | findstr "C:\\" ')
     pro = pro.split("\n")
@@ -290,11 +347,14 @@ while True:
                 sha256hash = str(Hashes[random.randint(0,len(Hashes)-1)]).replace("\n","").replace("\r","")
                 os.system("cls")
                 print(license)
+                print(("#"*80))
+                print("### Detections : "+str(int(dfcount/2))+" | Permalinks : "+str(pfcount)+" | TotalScans : "+str(TotalScans)+" | UnresponsedHashes : "+str(len(Hashes)))
+                print(("#"*80))
                 print("sha256 : "+sha256hash)
                 print("Checking Back The Hash of Submited File")
                 sc347 = ""
                 try:
-                    sc347 = analysis(sha256hash , "hash")
+                    sc347 = analysis(str(sha256hash) , "hash")
                 except:
                     pass
                 if sc347 !="":
